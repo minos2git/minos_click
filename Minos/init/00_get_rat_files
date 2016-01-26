@@ -1,0 +1,42 @@
+#! /bin/sh
+
+date;
+echo "get comp_all_AIDs from log"
+# comp_all_AIDs must not use init_repeat.h and Attach_CTAG disables checking repeated CIDs.
+#without weight, just cids.
+
+echo "get 001 legal AIDs "
+grep "mali act" log_mix_AIDs |cut -d: -f2 >legal_AIDs
+cat  ../update/01_update_AIDs >>legal_AIDs
+
+
+echo "get 01 repeat times of cid"
+#g++ 01_get_rat_repeat.cc -o p01_get_rat_repeat 
+#init_repeat.h to be in click/include/click/
+./p01_get_rat_repeat
+#> 01_count_all_repeat
+
+
+echo "get 02 RAIDs: AIDs Removing loops."
+#g++ 02_get_rat_raids.cc -o p02_get_rat_raids
+#legal_RAIDs
+./p02_get_rat_raids
+
+
+echo "get 03 init CW and RAT file, need more time, pls wait..."
+
+echo "get 031 elements.h from log_mix_AIDs, all the logs has the same order of cids! "
+grep "comp_cids" log_mix_AIDs > elements.h
+
+echo "get 032  032_size_global_cids"
+grep "router_global_comps" log_mix_AIDs |cut -d: -f2 > 032_size_global_cids
+
+#g++ 03_get_rat_h.cc -g -o p03_get_rat_h
+#03_get_rat_results
+#init_rat_cw.h
+./p03_get_rat_h
+
+
+
+
+date;
